@@ -144,6 +144,10 @@ class LightningClient extends EventEmitter {
                 _self.client.write(JSON.stringify(sendObj));
             }));
     }
+
+    clone() {
+        return new LightningClient(this.rpcPath)
+    }
 }
 
 const protify = s => s.replace(/-([a-z])/g, m => m[1].toUpperCase());
