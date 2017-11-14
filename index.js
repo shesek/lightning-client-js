@@ -57,6 +57,7 @@ class LightningClient extends EventEmitter {
                     return;
                 }
 
+                debug('#%d <-- %j', dataObject.id, dataObject.result)
                 _self.emit('res:' + dataObject.id, dataObject);
             });
         });
@@ -128,6 +129,8 @@ class LightningClient extends EventEmitter {
             params: args,
             id: callInt
         };
+
+        debug('#%d --> %s %j', callInt, method, args)
 
         // Wait for the client to connect
         return this.clientConnectionPromise
