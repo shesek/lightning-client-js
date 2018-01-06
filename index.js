@@ -159,4 +159,6 @@ methods.forEach(k => {
     };
 });
 
-module.exports = LightningClient;
+// optional new
+module.exports = rpcPath => new LightningClient(rpcPath);
+module.exports.LightningClient = LightningClient;
