@@ -15,6 +15,7 @@
   "dev-crash",
   "getinfo",
   "sendpay",
+  "pay",
   "connect",
   "dev-fail",
   "getpeers",
