@@ -127,7 +127,7 @@ class LightningClient extends EventEmitter {
         const sendObj = {
             method,
             params: args,
-            id: callInt
+            id: ''+callInt
         };
 
         debug('#%d --> %s %j', callInt, method, args)
