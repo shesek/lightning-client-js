@@ -54,7 +54,7 @@ class LightningClient extends EventEmitter {
 
         this.parser.onValue = function(val) {
           if (this.stack.length) return; // top-level objects only
-          debug('#%d <-- %j', val.id, val.result)
+          debug('#%d <-- %O', val.id, val.result)
           _self.emit('res:' + val.id, val);
         }
 
@@ -97,7 +97,7 @@ class LightningClient extends EventEmitter {
             id: ''+callInt
         };
 
-        debug('#%d --> %s %j', callInt, method, args)
+        debug('#%d --> %s %o', callInt, method, args)
 
         // Wait for the client to connect
         return this.clientConnectionPromise
