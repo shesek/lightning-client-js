@@ -4,6 +4,7 @@ const path = require('path');
 const net = require('net');
 const debug = require('debug')('lightning-client');
 const {EventEmitter} = require('events');
+const JSONParser = require('jsonparse')
 const _ = require('lodash');
 const methods = require('./methods');
 
@@ -24,6 +25,7 @@ class LightningClient extends EventEmitter {
         this.reconnectWait = 0.5;
         this.reconnectTimeout = null;
         this.reqcount = 0;
+        this.parser = new JSONParser
 
         const _self = this;
 
@@ -48,49 +50,14 @@ class LightningClient extends EventEmitter {
             });
         });
 
-        this.client.on('data', data => {
-            _.each(LightningClient.splitJSON(data.toString()), str => {
-                let dataObject = {};
-                try {
-                    dataObject = JSON.parse(str);
-                } catch (err) {
-                    return;
-                }
+        this.client.on('data', data => _self.parser.write(data));
 
-                debug('#%d <-- %j', dataObject.id, dataObject.result)
-                _self.emit('res:' + dataObject.id, dataObject);
-            });
-        });
-    }
-
-    static splitJSON(str) {
-        const parts = [];
-
-        let openCount = 0;
-        let lastSplit = 0;
-
-        for (let i = 0; i < str.length; i++) {
-            if (i > 0 && str.charCodeAt(i - 1) === 115) { // 115 => backslash, ignore this character
-                continue;
-            }
-
-            if (str[i] === '{') {
-                openCount++;
-            } else if (str[i] === '}') {
-                openCount--;
-
-                if (openCount === 0) {
-                    const start = lastSplit;
-                    const end = i + 1 === str.length ? undefined : i + 1;
-
-                    parts.push(str.slice(start, end));
-
-                    lastSplit = end;
-                }
-            }
+        this.parser.onValue = function(val) {
+          if (this.stack.length) return; // top-level objects only
+          debug('#%d <-- %j', val.id, val.result)
+          _self.emit('res:' + val.id, val);
         }
 
-        return parts.length === 0 ? [str] : parts;
     }
 
     increaseWaitTime() {
