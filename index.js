@@ -5,6 +5,7 @@ const net = require('net');
 const debug = require('debug')('lightning-client');
 const {EventEmitter} = require('events');
 const JSONParser = require('jsonparse')
+const LightningError = require('error/typed')({ type: 'lightning', message: 'lightning-client error' })
 const _ = require('lodash');
 const methods = require('./methods');
 
@@ -54,7 +55,7 @@ class LightningClient extends EventEmitter {
 
         this.parser.onValue = function(val) {
           if (this.stack.length) return; // top-level objects only
-          debug('#%d <-- %O', val.id, val.result)
+          debug('#%d <-- %O', val.id, val.error || val.result)
           _self.emit('res:' + val.id, val);
         }
 
@@ -103,14 +104,10 @@ class LightningClient extends EventEmitter {
         return this.clientConnectionPromise
             .then(() => new Promise((resolve, reject) => {
                 // Wait for a response
-                this.once('res:' + callInt, response => {
-                    if (_.isNil(response.error)) {
-                        resolve(response.result);
-                        return;
-                    }
-
-                    reject(new Error(response.error));
-                });
+                this.once('res:' + callInt, res => res.error == null
+                  ? resolve(res.result)
+                  : reject(LightningError(res.error))
+                );
 
                 // Send the command
                 _self.client.write(JSON.stringify(sendObj));
@@ -126,6 +123,6 @@ methods.forEach(k => {
     };
 });
 
-// optional new
 module.exports = rpcPath => new LightningClient(rpcPath);
 module.exports.LightningClient = LightningClient;
+module.exports.LightningError = LightningError;
