@@ -8,8 +8,10 @@ const JSONParser = require('jsonparse')
 const LightningError = require('error/typed')({ type: 'lightning', message: 'lightning-client error' })
 const methods = require('./methods');
 
+const defaultRpcPath = path.join(require('os').homedir(), '.lightning')
+
 class LightningClient extends EventEmitter {
-    constructor(rpcPath) {
+    constructor(rpcPath=defaultRpcPath) {
         if (!path.isAbsolute(rpcPath)) {
             throw new Error('The rpcPath must be an absolute path');
         }
