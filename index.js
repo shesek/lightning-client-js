@@ -6,7 +6,6 @@ const debug = require('debug')('lightning-client');
 const {EventEmitter} = require('events');
 const JSONParser = require('jsonparse')
 const LightningError = require('error/typed')({ type: 'lightning', message: 'lightning-client error' })
-const _ = require('lodash');
 const methods = require('./methods');
 
 class LightningClient extends EventEmitter {
@@ -85,10 +84,6 @@ class LightningClient extends EventEmitter {
     }
 
     call(method, args = []) {
-        if (!_.isString(method) || !_.isArray(args)) {
-            return Promise.reject(new Error('invalid_call'));
-        }
-
         const _self = this;
 
         const callInt = ++this.reqcount;
