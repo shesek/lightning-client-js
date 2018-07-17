@@ -47,6 +47,7 @@ class LightningClient extends EventEmitter {
 
             _self.client.on('error', error => {
                 console.error(`Lightning client connection error`, error);
+                _self.emit('error', error);
                 _self.increaseWaitTime();
                 _self.reconnect();
             });
