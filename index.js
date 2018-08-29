@@ -11,19 +11,32 @@ const methods = require('./methods');
 const defaultRpcPath = path.join(require('os').homedir(), '.lightning')
 
 class LightningClient extends EventEmitter {
-    constructor(rpcPath=defaultRpcPath) {
-        if (!path.isAbsolute(rpcPath)) {
-            throw new Error('The rpcPath must be an absolute path');
+    constructor(rpcPath=defaultRpcPath, rpcPort) {
+        if (rpcPort) {
+            rpcPort = Number(rpcPort);
+
+            if (!rpcPort || rpcPort < 0 || rpcPort > 65535) {
+                rpcPort = null;
+            }
         }
 
-        if (rpcPath.slice(-14) !== '/lightning-rpc') {
-            rpcPath = path.join(rpcPath, '/lightning-rpc');
-        }
+        if (rpcPort) {
+            debug(`Connecting to ${rpcPath}:${rpcPort} (TCP)`);
+        } else {
+            if (!path.isAbsolute(rpcPath)) {
+                throw new Error('The rpcPath must be an absolute path');
+            }
 
-        debug(`Connecting to ${rpcPath}`);
+            if (rpcPath.slice(-14) !== '/lightning-rpc') {
+                rpcPath = path.join(rpcPath, '/lightning-rpc');
+            }
+
+            debug(`Connecting to ${rpcPath}`);
+        }
 
         super();
         this.rpcPath = rpcPath;
+        this.rpcPort = rpcPort;
         this.reconnectWait = 0.5;
         this.reconnectTimeout = null;
         this.reqcount = 0;
@@ -31,7 +44,12 @@ class LightningClient extends EventEmitter {
 
         const _self = this;
 
-        this.client = net.createConnection(rpcPath);
+        if (rpcPort) {
+            this.client = net.createConnection(rpcPort, rpcPath);
+        } else {
+            this.client = net.createConnection(rpcPath);
+        }
+
         this.clientConnectionPromise = new Promise(resolve => {
             _self.client.on('connect', () => {
                 debug(`Lightning client connected`);
@@ -81,7 +99,12 @@ class LightningClient extends EventEmitter {
         this.reconnectTimeout = setTimeout(() => {
             debug('Trying to reconnect...');
 
-            _self.client.connect(_self.rpcPath);
+            if (_self.rpcPort) {
+                _self.client.connect(_self.rpcPort, _self.rpcPath);
+            } else {
+                _self.client.connect(_self.rpcPath);
+            }
+
             _self.reconnectTimeout = null;
         }, this.reconnectWait * 1000);
     }
@@ -121,6 +144,6 @@ methods.forEach(k => {
     };
 });
 
-module.exports = rpcPath => new LightningClient(rpcPath);
+module.exports = (rpcPath, rpcPort) => new LightningClient(rpcPath, rpcPort);
 module.exports.LightningClient = LightningClient;
 module.exports.LightningError = LightningError;
