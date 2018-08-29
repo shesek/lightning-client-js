@@ -22,6 +22,9 @@ const LightningClient = require('lightning-client');
 // This should point to your lightning-dir, by default in ~/.lightning
 const client = new LightningClient('/home/bitcoind/.lightning');
 
+// Alternatively, you can pass a host and a port to use a TCP connection
+const client = new LightningClient('127.0.0.1', 1234);
+
 // Every call returns a Promise
 client.getinfo()
     .then(info => console.log(info));
