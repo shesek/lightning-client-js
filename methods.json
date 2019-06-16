@@ -33,5 +33,17 @@
   "withdraw",
   "newaddr",
   "listfunds",
-  "dev-rescan-outputs"
+  "dev-rescan-outputs",
+  “feerates”,
+  “setchannelfee”,
+  “delexpiredinvoice”,
+  “autocleaninvoice”,
+  “check”,
+  “waitsendpay”,
+  “listsendpays”,
+  “disconnect”,
+  “listforwards”,
+  “ping”,
+  “paystatus”,
+  “listpays
 ]
