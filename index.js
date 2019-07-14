@@ -2,9 +2,9 @@
 
 const path = require('path');
 const net = require('net');
+const readline = require('readline');
 const debug = require('debug')('lightning-client');
 const {EventEmitter} = require('events');
-const JSONParser = require('jsonparse')
 const LightningError = require('error/typed')({ type: 'lightning', message: 'lightning-client error' })
 const methods = require('./methods');
 
@@ -27,11 +27,12 @@ class LightningClient extends EventEmitter {
         this.reconnectWait = 0.5;
         this.reconnectTimeout = null;
         this.reqcount = 0;
-        this.parser = new JSONParser
 
         const _self = this;
 
         this.client = net.createConnection(rpcPath);
+        this.rl = readline.createInterface({ input: this.client })
+
         this.clientConnectionPromise = new Promise(resolve => {
             _self.client.on('connect', () => {
                 debug(`Lightning client connected`);
@@ -53,14 +54,13 @@ class LightningClient extends EventEmitter {
             });
         });
 
-        this.client.on('data', data => _self.parser.write(data));
-
-        this.parser.onValue = function(val) {
-          if (this.stack.length) return; // top-level objects only
-          debug('#%d <-- %O', val.id, val.error || val.result)
-          _self.emit('res:' + val.id, val);
-        }
-
+        this.rl.on('line', line => {
+          line = line.trim()
+          if (!line) return
+          const data = JSON.parse(line)
+          debug('#%d <-- %O', data.id, data.error || data.result)
+          _self.emit('res:' + data.id, data)
+        })
     }
 
     increaseWaitTime() {
