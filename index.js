@@ -3,7 +3,7 @@
 const path = require('path');
 const net = require('net');
 const readline = require('readline');
-const debug = require('debug')('lightning-client');
+const debug = require('debug')('clightning-client');
 const {EventEmitter} = require('events');
 const LightningError = require('error/typed')({ type: 'lightning', message: 'lightning-client error' })
 const methods = require('./methods');

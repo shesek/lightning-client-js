@@ -1,34 +1,17 @@
 {
-  "name": "lightning-client",
-  "version": "0.5.2-beta.3",
+  "name": "clightning-client",
+  "version": "0.1.0",
   "description": "JavaScript c-lightning client",
   "main": "index.js",
-  "scripts": {
-    "test": "xo"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BHBNETWORK/lightning-client-js.git"
-  },
+  "repository": "https://github.com/shesek/lightning-client-js",
   "keywords": [
     "lightning",
+    "c-lightning",
     "network",
     "bitcoin"
   ],
-  "author": "Alekos Filini",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/BHBNETWORK/lightning-client-js/issues"
-  },
-  "homepage": "https://github.com/BHBNETWORK/lightning-client-js#readme",
-  "xo": {
-    "esnext": true,
-    "space": 4,
-    "rules": {},
-    "envs": [
-      "node"
-    ]
-  },
+  "homepage": "https://github.com/shesek/lightning-client-js",
   "dependencies": {
     "debug": "^3.1.0",
     "error": "github:shesek/error"
