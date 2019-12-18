@@ -29,7 +29,7 @@ class LightningClient extends EventEmitter {
           // to be removed in v0.2.0
           else if (fExists(rpcPath, 'bitcoin', 'lightning-rpc')) {
             console.error(`WARN: ${rpcPath}/lightning-rpc is missing, using the bitcoin mainnet subdirectory at ${rpcPath}/bitcoin instead.`)
-            console.error(`WARN: specifying the main lightning data directory is deprecated, please specify the network directory explicitly with "--ln-path ${rpcPath}/<network>".\n`)
+            console.error(`WARN: specifying the main lightning data directory is deprecated, please specify the network directory explicitly.\n`)
             rpcPath = path.join(rpcPath, 'bitcoin', 'lightning-rpc')
           }
         }
