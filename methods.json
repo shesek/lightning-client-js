@@ -45,5 +45,6 @@
   "listforwards",
   "ping",
   "paystatus",
-  "listpays"
+  "listpays",
+  "delpay"
 ]
